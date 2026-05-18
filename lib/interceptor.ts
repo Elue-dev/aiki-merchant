@@ -42,6 +42,10 @@ export function requestInterceptor(
     request.headers['Authorization'] = `Bearer ${token}`
   }
 
+  if (request.method?.toLowerCase() === 'get') {
+    request.headers['ngrok-skip-browser-warning'] = 'true'
+  }
+
   return request
 }
 
