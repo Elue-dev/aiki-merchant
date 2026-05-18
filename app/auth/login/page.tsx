@@ -25,10 +25,21 @@ export default function LoginPage() {
       )
 
       if (error) {
-        toast.error({
-          title: 'Login failed',
-          description: error?.message ?? 'Something went wrong, please try again.',
-        })
+        if (error?.message === 'PERSONAL_CLIENT_NOT_ALLOWED') {
+          toast.error({
+            title: 'Wrong app',
+            description: 'This portal is for vendors only. Please use the Aiki client app.',
+            button: {
+              title: 'Go to client app',
+              onClick: () => window.open('https://useaiki.co', '_blank'),
+            },
+          })
+        } else {
+          toast.error({
+            title: 'Login failed',
+            description: error?.message ?? 'Something went wrong, please try again.',
+          })
+        }
         return
       }
 

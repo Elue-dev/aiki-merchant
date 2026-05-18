@@ -99,6 +99,8 @@ export const useMe = () => {
   return query
 }
 
+const VENDOR_ROLES = ['VENDOR_ADMIN', 'VENDOR_EDITOR', 'VENDOR_VIEWER'] as const
+
 export function useLogin() {
   const setTokens = useAuthStore((s) => s.setTokens)
   const setUser = useAuthStore((s) => s.setUser)
@@ -108,6 +110,10 @@ export function useLogin() {
     mutationFn: (payload: LoginPayload) =>
       withSlowRequestTracking(() => authApi.login(payload)),
     onSuccess: async (res) => {
+      const role = res.data.user.role as string
+      if (!VENDOR_ROLES.includes(role as typeof VENDOR_ROLES[number])) {
+        throw Object.assign(new Error('PERSONAL_CLIENT_NOT_ALLOWED'), {})
+      }
       setTokens(res.data.accessToken, res.data.refreshToken)
       const me = await authApi.getMe()
       setVendor(me.data.vendor)
